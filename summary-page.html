@@ -1,0 +1,205 @@
+<!-- summary-page.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing Summary</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Basic reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Hide scrollbar */
+        /* Hide scrollbar */
+        body {
+        margin: 0;
+        padding: 0;
+        background: transparent; /* Hoàn toàn trong suốt */
+        color: #fff; /* Màu chữ để dễ nhìn */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        backdrop-filter: blur(5px); /* Tùy chọn: Làm mờ phía sau */
+        -webkit-backdrop-filter: blur(5px); /* Tương thích với WebKit */
+    }
+/* For all browsers */
+.scroll-hidden {
+    overflow: scroll; /* Enables scrolling */
+    -ms-overflow-style: none; /* Internet Explorer and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+.scroll-hidden::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, and Opera */
+}
+        /* For cases where content should be scrollable but without a visible scrollbar */
+        body::-webkit-scrollbar {
+            display: none;
+            /* Hide scrollbar */
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: Arial, sans-serif;
+        }
+
+
+        /* Layout styles */
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        header,
+        footer {
+
+            color: white;
+            text-align: center;
+            padding: 10px;
+        }
+
+        main {
+            flex: 1;
+            overflow-y: auto;
+            /* Enable scrolling for the main content */
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        footer {
+            font-size: 14px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 scroll-hidden h-64 overflow-y-auto">
+    <div id="loading-overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div class="spinner border-t-4 border-blue-500 border-solid rounded-full w-16 h-16 animate-spin"></div>
+    </div>
+    
+    <style>
+        .spinner {
+            border-width: 4px;
+            border-top-color: #3490dc; /* Màu sắc của spinner */
+            border-right-color: transparent;
+            border-bottom-color: transparent;
+            border-left-color: transparent;
+            border-radius: 50%;
+            width: 3rem;
+            height: 3rem;
+            animation: spin 1s linear infinite;
+        }
+    
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+    <div id="summary-container" class="bg-white shadow-md rounded-lg p-6 w-full max-w-md relative">
+        <!-- Back Button -->
+        <button 
+            id="back-button" 
+            onclick="window.location.href='index.html';" 
+            class="absolute top-4 left-4 text-gray-600 hover:text-gray-800 transition"
+            title="Go Back"
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+        </button>
+    
+        <h1 class="text-2xl font-bold text-center text-gray-700 mb-4">Billing Summary</h1>
+       
+        <div class="mb-4 flex justify-center">
+            <div id="qr-code" class="w-100 h-100 border border-gray-300 rounded-lg overflow-hidden">
+                <img id="qr-image" alt="QR Code" class="w-full h-full object-cover" />
+            </div>
+        </div>
+        <div class="mb-4 ">
+            <p class="text-sm text-gray-500 font-medium">Order ID:</p>
+                <p id="order-id" class="text-lg font-semibold text-gray-800 flex justify-between items-center"></p>
+            <p class="text-sm text-gray-400 font-small">Vui lòng thanh toán bằng cách quét mã QR thông qua app ngân hàng để tự động kích hoạt hoặc CK theo số tiền vào TK 0974489489 Ngân Hàng MBBank. Lưu ý khi ck điền nội dung là mã đơn hàng ko thêm bớt gì khác hệ thống sẽ tự động gia hạn </p>
+           
+        </div>
+        <div class="mb-4">
+            <p class="text-lg font-semibold text-gray-800">Ngân hàng MB Bank</p>
+        </div>
+        <div class="mb-4">
+            <p class="text-sm font-medium text-gray-500">Tên tài khoản</p>
+            <p class="text-lg font-semibold text-gray-800">Cao Chí Dũng</p>
+        </div>
+        <div class="mb-4">
+            <p class="text-sm font-medium text-gray-500">Số tài khoản</p>
+            <p class="text-lg font-semibold text-gray-800 flex justify-between">
+                0974489489 
+
+            </p>
+        </div>
+        <div id="billing-info" class="mb-4">
+            <p id="subscription-info" class="text-gray-600 font-medium"></p>
+            <p id="price-info" class="text-xl font-bold text-gray-800"></p>
+        </div>
+        <div id="status-container" class="mb-4">
+            <p id="status-message" class="text-sm text-blue-600 font-medium"></p>
+        </div>
+        <div class="flex items-center space-x-4">
+            <!-- Đã Chuyển Button -->
+            <button 
+                id="da-chuyen-button" 
+                class="flex-2 py-2 px-4 bg-green-400 text-white font-semibold rounded-lg transition"
+            >
+                Đã Chuyển
+            </button>
+        
+            <!-- Install Button -->
+            <button 
+                id="install-button" 
+                class="flex-1 py-2 px-4 bg-gray-600 text-white font-semibold rounded-lg hover:bg-green-700 transition"
+                disabled
+            >
+                Install
+            </button>
+        </div>
+        
+        
+    </div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const daChuyenButton = document.getElementById('da-chuyen-button');
+    const installButton = document.getElementById('install-button');
+
+    if (daChuyenButton && installButton) {
+        // Disable the Install button by default
+        installButton.disabled = true;
+        installButton.classList.add('bg-gray-600');
+        installButton.classList.remove('hover:bg-green-700');
+
+        // Enable the Install button when Đã Chuyển is clicked
+        daChuyenButton.addEventListener('click', () => {
+            installButton.disabled = false;
+            installButton.classList.remove('bg-gray-600');
+            installButton.classList.add('hover:bg-green-700');
+        });
+    }
+});
+
+</script>
+    <script src="renderer.js"></script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+{
+  "name": "electron-tailwind-form",
+  "version": "1.0.0",
+  "description": "Electron app with Tailwind CSS for forms",
+  "main": "main.js",
+  "scripts": {
+    "dev": "electronmon .",
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "dependencies": {
+    "electron-updater": "^6.3.9",
+    "node-fetch": "^2.7.0",
+    "regedit": "^5.1.3",
+    "sudo-prompt": "^9.2.1"
+  },
+  "devDependencies": {
+    "electron": "^25.3.0",
+    "electron-builder": "^24.13.3",
+    "electron-reload": "^2.0.0-alpha.1",
+    "electronmon": "^2.0.3"
+  },
+  "build": {
+    "appId": "com.hubsvn.hubsvncig",
+    "productName": "HubsvnCIG",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "renderer.js",
+      "preload.js",
+      "node_modules/**/*",
+      "index.html",
+      "summary-page.html",
+      "image/**/*"
+    ],
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "hubservices-vn",
+        "repo": "HubsvnCIG"
+      }
+    ],
+    "win": {
+      "asar": true,
+      "target": "portable",
+      "artifactName": "${productName}-portable.exe",
+      "icon": "image/logo.ico"
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "icon": "assets/icons/mac/icon.icns"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "icon": "assets/icons/png"
+    }
+  }
+}

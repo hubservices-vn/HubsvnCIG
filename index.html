@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Registration</title>
+    <script src="renderer.js" defer></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Basic reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+/* Hide scrollbar while enabling scrolling */
+body {
+    margin: 0;
+    padding: 0;
+    background-color:transparent;
+    
+    background-size: cover;
+    color: #fff; /* Text color for readability */
+    display: flex;
+    overflow-y: auto; /* Enable scrolling for vertical content */
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+    scrollbar-width: none; /* Firefox: Hide scrollbar */
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    backdrop-filter: blur(5px); /* Optional: Blur background */
+    -webkit-backdrop-filter: blur(5px); /* WebKit compatibility */
+}
+
+/* Chrome, Safari, and Edge: Hide scrollbar */
+body::-webkit-scrollbar {
+    display: none;
+}
+
+        html,
+        body {
+            height: 100%;
+            font-family: Arial, sans-serif;
+            border-radius: 20px;
+        }
+
+
+        /* Layout styles */
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+
+        }
+
+        header,
+        footer {
+
+            text-align: center;
+           
+            border-radius: 20px;
+        }
+
+        main {
+    margin: 0;
+    padding: 0;
+    background-color: rgb(255, 255, 255); /* Nền màu */
+    background-image: url("image/web_editor_Floats_08.svg"); /* Hình nền */
+    background-size: cover; /* Để hình ảnh phủ kín khung hình */
+    background-repeat: no-repeat; /* Không lặp hình ảnh */
+    background-position: center; /* Canh giữa hình ảnh nền */
+    border-radius: 20px; /* Bo tròn các góc */
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Đổ bóng */
+    width: 100%;
+    height: 100%;
+    
+}
+.subscription-card{
+    background: rgba(200, 214, 2, 0.8); /* Nền mờ */
+        border-radius: 20px; /* Bo tròn các góc */
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Đổ bóng */
+        backdrop-filter: blur(15px); /* Hiệu ứng làm mờ */
+        -webkit-backdrop-filter: blur(15px); /* Hỗ trợ WebKit */
+}
+
+
+        header h1 {
+            margin: 0;
+            font-size: 20px;
+        }
+        #submit-button:disabled {
+        background-color: #cbd5e1; /* Light gray */
+        color: #94a3b8; /* Darker gray */
+        cursor: not-allowed;
+    }
+
+    #submit-button:not(:disabled):hover {
+        filter: brightness(85%);
+    }
+    #verify-otp-button:disabled {
+        background-color: #cbd5e1; /* Light gray */
+        color: #94a3b8; /* Darker gray */
+        cursor: not-allowed;
+    }
+
+    #verify-otp-button:not(:disabled):hover {
+        filter: brightness(85%);
+    }
+    </style>
+</head>
+
+<body class="flex items-center justify-center h-screen ">
+
+    <div class="container ">
+        <!-- Header -->
+        <div id="loading-overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+            <div class="spinner border-t-4 border-blue-500 border-solid rounded-full w-16 h-16 animate-spin"></div>
+        </div>
+        
+        <style>
+            .spinner {
+                border-width: 4px;
+                border-top-color: #3490dc; /* Màu sắc của spinner */
+                border-right-color: transparent;
+                border-bottom-color: transparent;
+                border-left-color: transparent;
+                border-radius: 50%;
+                width: 3rem;
+                height: 3rem;
+                animation: spin 1s linear infinite;
+            }
+        
+            @keyframes spin {
+                from {
+                    transform: rotate(0deg);
+                }
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+
+        </style>
+        <!-- Main content -->
+        <main>
+            <div id="update-container" class="hidden">
+                <p id="update-message" class="text-blue-600 font-medium"></p>
+                <button id="install-update" class="hidden bg-blue-500 text-white px-4 py-2 rounded-lg">Install Update</button>
+            </div>
+            <form id="registration-form" class="flex flex-col ">
+                <div>
+                    <div class="pt-20 md:w-3/5 lg:w-1/2 md:max-w-2xl w-full p-5 relative mx-auto">
+                        <img alt="Logo Picture"
+                            src="image/logo.png"
+                            class="top-5 w-full h-20 object-contain absolute transition-all">
+                    </div>
+                </div>
+                <div class="mt-6 md:w-3/5 lg:w-1/2 md:max-w-2xl w-full mx-auto px-4">
+                    <div class="open-complete-form mb-10" dir="ltr">
+                        <form id="registration-form" style="--form-color: #64748b;">
+                            <div class="form-group flex flex-wrap w-full">
+                                <div class="grid grid-cols-12 relative transition-all w-full">
+                                    <!-- Name -->
+                                    <div id="block-name" class="px-2 col-span-full">
+                                        <div class="relative my-1.5">
+                                            <label for="name"
+                                                class="input-label text-gray-700 font-medium uppercase text-xs">
+                                                Họ và Tên <span class="text-red-500 required-dot">*</span>
+                                            </label>
+                                            <input id="name" name="name" type="text"
+                                                class="flex-1 appearance-none border border-gray-300 w-full bg-white text-gray-700 placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:border-transparent focus:ring-opacity-100 rounded-lg px-4 py-2 text-base"
+                                                placeholder="John Doe" maxlength="2000" required>
+                                        </div>
+                                    </div>
+
+                                    <!-- Email -->
+                                    <div id="block-email" class="px-2 col-span-full">
+                                        <div class="relative my-1.5">
+                                            <label for="email"
+                                                class="input-label text-gray-700 font-medium uppercase text-xs">
+                                                Email <span class="text-red-500 required-dot">*</span>
+                                            </label>
+                                            <input id="email" name="email" type="email"
+                                                class="flex-1 appearance-none border border-gray-300 w-full bg-white text-gray-700 placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:border-transparent focus:ring-opacity-100 rounded-lg px-4 py-2 text-base"
+                                                placeholder="john.doe@example.com" required>
+                                        </div>
+                                    </div>
+
+                                  <!-- Address -->
+                                  <div id="block-address" class="px-2 col-span-full">
+                                    <div class="relative my-1.5">
+                                        <label for="address"
+                                            class="input-label text-gray-700 font-medium uppercase text-xs">
+                                            Địa chỉ
+                                        </label> <span class="text-red-500">*</span>
+                                        <input id="address" name="address" type="text" placeholder="20 Dinh Chau"
+                                            class="flex-1 appearance-none border border-gray-300 w-full bg-white text-gray-700 placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:border-transparent focus:ring-opacity-100 rounded-lg px-4 py-2 text-base"
+                                            required>
+                                    </div>
+                                </div>
+
+                                    <!-- Tỉnh/TP -->
+                                    <div id="block-city" class="px-2 col-span-full">
+                                        <div class="relative my-1.5">
+                                            <label for="city"
+                                                class="input-label text-gray-700 font-medium uppercase text-xs">
+                                                Tỉnh/TP
+                                            </label> <span class="text-red-500">*</span>
+                                        
+<select id="city" name="city" class="flex-1 appearance-none border border-gray-300 w-full bg-white text-gray-700 placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:border-transparent focus:ring-opacity-100 rounded-lg px-4 py-2 text-base" required>
+    <option value="168">Hà Nội</option>
+    <option value="170">TP. Hồ Chí Minh</option>
+    <option value="172">An Giang</option>
+    <option value="174">Bà Rịa - Vũng Tàu</option>
+    <option value="176">Bắc Giang</option>
+    <option value="178">Bắc Kạn</option>
+    <option value="180">Bạc Liêu</option>
+    <option value="182">Bắc Ninh</option>
+    <option value="184">Bến Tre</option>
+    <option value="186">Bình Định</option>
+    <option value="188">Bình Dương</option>
+    <option value="190">Bình Phước</option>
+    <option value="192">Bình Thuận</option>
+    <option value="194">Cà Mau</option>
+    <option value="196">Cần Thơ</option>
+    <option value="198">Cao Bằng</option>
+    <option value="200">Đà Nẵng</option>
+    <option value="202">Đắk Lắk</option>
+    <option value="204">Đắk Nông</option>
+    <option value="206">Điện Biên</option>
+    <option value="208">Đồng Nai</option>
+    <option value="210">Đồng Tháp</option>
+    <option value="212">Gia Lai</option>
+    <option value="214">Hà Giang</option>
+    <option value="216">Hà Nam</option>
+    <option value="218">Hà Tĩnh</option>
+    <option value="220">Hải Dương</option>
+    <option value="222">Hải Phòng</option>
+    <option value="224">Hậu Giang</option>
+    <option value="226">Hòa Bình</option>
+    <option value="228">Hưng Yên</option>
+    <option value="230">Khánh Hòa</option>
+    <option value="232">Kiên Giang</option>
+    <option value="234">Kon Tum</option>
+    <option value="236">Lai Châu</option>
+    <option value="238">Lâm Đồng</option>
+    <option value="240">Lạng Sơn</option>
+    <option value="242">Lào Cai</option>
+    <option value="244">Long An</option>
+    <option value="246">Nam Định</option>
+    <option value="248">Nghệ An</option>
+    <option value="250">Ninh Bình</option>
+    <option value="252">Ninh Thuận</option>
+    <option value="254">Phú Thọ</option>
+    <option value="256">Phú Yên</option>
+    <option value="258">Quảng Bình</option>
+    <option value="260">Quảng Nam</option>
+    <option value="262">Quảng Ngãi</option>
+    <option value="264">Quảng Ninh</option>
+    <option value="266">Quảng Trị</option>
+    <option value="268">Sóc Trăng</option>
+    <option value="270">Sơn La</option>
+    <option value="272">Tây Ninh</option>
+    <option value="274">Thái Bình</option>
+    <option value="276">Thái Nguyên</option>
+    <option value="278">Thanh Hóa</option>
+    <option value="280">Thừa Thiên Huế</option>
+    <option value="282">Tiền Giang</option>
+    <option value="284">Trà Vinh</option>
+    <option value="286">Tuyên Quang</option>
+    <option value="288">Vĩnh Long</option>
+    <option value="290">Vĩnh Phúc</option>
+    <option value="292">Yên Bái</option>
+</select>
+
+                                        </div>
+                                    </div>
+                                     <!-- Phone and Send OTP -->
+                                  <div id="block-phone" class="px-2 col-span-full">
+                                    <label for="phone" class="input-label text-gray-700 font-medium uppercase text-xs">
+                                        Phone Number <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="flex gap-2">
+                                        <input
+                                            id="phone"
+                                            name="phone"
+                                            type="tel"
+                                            class="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-gray-700 placeholder-gray-400 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            placeholder="Enter Vietnamese phone number"
+                                            placeholder="0974489489"
+                                            disable
+                                            required
+                                        />
+                                        <button
+                                            id="otp-button"
+                                            type="button"
+                                            class="bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                        >
+                                            Get OTP
+                                        </button>
+                                    </div>
+                                    <small id="phone-error" class="text-red-500 mt-1 hidden">Invalid Vietnamese phone number.</small>
+                                    <small id="countdown" class="text-red-500 hidden">You can request a new OTP in <span id="timer">60</span> seconds.</small>
+                                </div>
+                                
+                                
+<!-- OTP -->
+<div id="block-otp" class="px-2 col-span-full">
+    <label for="otp" class="input-label text-gray-700 font-medium uppercase text-xs">
+        Enter OTP <span class="text-red-500">*</span>
+    </label>
+    <div class="flex gap-2">
+    <input
+        id="otp"
+        name="otp"
+        type="text"
+        class="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-gray-700 placeholder-gray-400 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        placeholder="Enter 6-digit OTP"
+        required
+    />
+    <button
+    id="verify-otp-button"
+    type="button"
+    class="bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+    disabled
+    required
+>
+    Verify
+</button>
+</div>
+    <small id="otp-error" class="text-red-500 mt-1 hidden">Invalid OTP. Please try again.</small>
+</div>
+
+                                   
+<!-- Subscription Cards -->
+<div id="block-subscription" class="px-2 col-span-full">
+    <div class="relative my-1.5">
+        <label for="subscription" class="input-label text-gray-700 font-medium uppercase text-xs">
+            Subscription
+        </label>
+        <div class="grid grid-cols-3 gap-4 mt-2">
+            <!-- 6 months -->
+            <label
+                class="subscription-card block border border-gray-300 rounded-lg shadow-sm p-4 cursor-pointer hover:shadow-md focus-within:ring-2 focus-within:ring-offset-2 transition-all"
+                onclick="selectSubscription(this)">
+                <input type="radio" name="subscription" value="6" class="hidden" />
+                <div class="text-center text-gray-500">
+                    <p class="text-lg font-semibold">140,000đ</p>
+                    <p class="text-sm text-gray-500">6 tháng</p>
+                    <p class="text-sm text-gray-500">FO4 IPBoot</p>
+                </div>
+            </label>
+            <!-- 12 months -->
+            <label
+                class="subscription-card block bg-blue-100 border-blue-500 ring ring-blue-500 border border-gray-300 rounded-lg shadow-sm p-4 cursor-pointer hover:shadow-md focus-within:ring-2 focus-within:ring-offset-2 transition-all bg-blue-100"
+                onclick="selectSubscription(this)">
+                <input type="radio" name="subscription" value="12" class="hidden" checked />
+                <div class="text-center text-gray-500">
+                    <p class="text-lg font-semibold text-nowrap ">200,000đ</p>
+                    <p class="text-sm text-gray-500 text-nowrap">12 tháng</p>
+                    <p class="text-sm text-gray-500 text-nowrap">Full IPBoot</p>
+                </div>
+            </label>
+            <!-- 24 months -->
+            <label
+                class="subscription-card block border border-gray-300 rounded-lg shadow-sm p-4 cursor-pointer hover:shadow-md focus-within:ring-2 focus-within:ring-offset-2 transition-all"
+                onclick="selectSubscription(this)">
+                <input type="radio" name="subscription" value="24" class="hidden" />
+                <div class="text-center text-gray-500">
+                    <p class="text-lg font-semibold">360,000đ</p>
+                    <p class="text-sm text-gray-500">24 tháng</p>
+                    <p class="text-sm text-gray-500">Full IPBoot</p>
+                    <p class="text-sm text-gray-500 text-nowrap">Online Support</p>
+                </div>
+            </label>
+        </div>
+    </div>
+</div>
+
+                                    
+                            </div>
+                            <div id="progress-container" class="hidden">
+                            <p id="progress-message">Progress message will appear here...</p>
+                        </div>
+   
+          <!-- Footer -->
+   
+   
+
+<!-- Footer -->
+<footer class="fixed bottom-5 mx-auto pr-8 w-full ">
+    <div class="container mx-auto ">
+        <!-- Submit Button -->
+        <div class="flex ">
+            <button
+                type="submit"
+                id="submit-button"
+                class="w-full py-3 text-base font-semibold text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-500  disabled:bg-gray-400 disabled:cursor-not-allowed"
+                disabled
+            >
+                Đăng ký
+            </button>
+        </div>
+    </div>
+</footer>
+</form>
+    </div>
+
+
+
+  
+<script src="renderer.js"></script>
+</body>
+
+</html>
